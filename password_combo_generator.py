@@ -8,18 +8,20 @@ Author: Kris Armstrong
 """
 import argparse
 import logging
-from logging.handlers import RotatingFileHandler
 import sys
 from itertools import permutations, product
-from pathlib import Path
+from logging.handlers import RotatingFileHandler
 from typing import List, Set
 
 __version__ = "1.0.1"
 
+
 class Config:
     """Global constants for PasswordComboGenerator."""
+
     LOG_FILE: str = "password_combo_generator.log"
     ENCODING: str = "utf-8"
+
 
 def setup_logging(verbose: bool, logfile: str = Config.LOG_FILE) -> None:
     """Configure logging with rotating file handler.
@@ -40,6 +42,7 @@ def setup_logging(verbose: bool, logfile: str = Config.LOG_FILE) -> None:
         ],
     )
 
+
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments.
 
@@ -56,29 +59,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--password",
         required=True,
-        help="Password to generate combinations and permutations for"
+        help="Password to generate combinations and permutations for",
     )
     parser.add_argument(
         "--output_file",
         default="passwords.txt",
-        help="Output file for generated passwords"
+        help="Output file for generated passwords",
     )
     parser.add_argument(
-        "-v", "--verbose",
-        action="store_true",
-        help="Enable verbose logging"
+        "-v", "--verbose", action="store_true", help="Enable verbose logging"
     )
+    parser.add_argument("--logfile", default=Config.LOG_FILE, help="Log file path")
     parser.add_argument(
-        "--logfile",
-        default=Config.LOG_FILE,
-        help="Log file path"
-    )
-    parser.add_argument(
-        "--version",
-        action="version",
-        version=f"%(prog)s {__version__}"
+        "--version", action="version", version=f"%(prog)s {__version__}"
     )
     return parser.parse_args()
+
 
 def generate_combinations(password: str) -> List[str]:
     """Generate all combinations of upper and lower case for the letters.
@@ -89,8 +85,11 @@ def generate_combinations(password: str) -> List[str]:
     Returns:
         List of all case combinations.
     """
-    chars = [(char.lower(), char.upper()) if char.isalpha() else (char,) for char in password]
-    return [''.join(combination) for combination in product(*chars)]
+    chars = [
+        (char.lower(), char.upper()) if char.isalpha() else (char,) for char in password
+    ]
+    return ["".join(combination) for combination in product(*chars)]
+
 
 def generate_permutations(combinations: List[str]) -> Set[str]:
     """Generate all permutations of each combination.
@@ -105,8 +104,9 @@ def generate_permutations(combinations: List[str]) -> Set[str]:
     for combination in combinations:
         perms = permutations(combination)
         for perm in perms:
-            permuted_passwords.add(''.join(perm))
+            permuted_passwords.add("".join(perm))
     return permuted_passwords
+
 
 def save_passwords(passwords: Set[str], output_file: str) -> None:
     """Save generated passwords to the output file.
@@ -132,6 +132,7 @@ def save_passwords(passwords: Set[str], output_file: str) -> None:
         logging.error("Error writing to output file %s: %s", output_file, e)
         raise
 
+
 def main() -> int:
     """Main entry point for PasswordComboGenerator.
 
@@ -153,7 +154,9 @@ def main() -> int:
         permutations_set = generate_permutations(combinations)
         logging.debug("Generated %d unique permutations", len(permutations_set))
         save_passwords(permutations_set, args.output_file)
-        print(f"Generated {len(permutations_set)} passwords, saved to {args.output_file}")
+        print(
+            f"Generated {len(permutations_set)} passwords, saved to {args.output_file}"
+        )
         return 0
     except KeyboardInterrupt:
         logging.info("Cancelled by user")
@@ -163,6 +166,7 @@ def main() -> int:
         logging.error("Error: %s", e)
         print(f"Error: {e}")
         return 1
+
 
 if __name__ == "__main__":
     sys.exit(main())
