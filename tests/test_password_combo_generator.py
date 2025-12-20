@@ -22,13 +22,13 @@ def tmp_output_file(tmp_path):
 
 def test_version() -> None:
     """Test version format."""
-    assert __version__ == "1.0.1"
+    assert __version__ == "1.0.2"
 
 
 def test_generate_combinations():
     """Test generating case combinations."""
-    password = "ab1"
-    combos = generate_combinations(password)
+    value = "ab1"
+    combos = generate_combinations(value)
     expected = ["ab1", "Ab1", "aB1", "AB1"]
     assert sorted(combos) == sorted(expected)
 
@@ -58,7 +58,7 @@ def test_save_passwords(tmp_output_file):
     """Test saving passwords to a file."""
     passwords = {"ab1", "Ab1", "1ba"}
     save_passwords(passwords, str(tmp_output_file))
-    with open(tmp_output_file, "r", encoding=Config.ENCODING) as f:
+    with open(tmp_output_file, encoding=Config.ENCODING) as f:
         content = f.read().strip().split("\n")
     assert sorted(content) == ["1ba", "Ab1", "ab1"]
 

@@ -11,9 +11,8 @@ import logging
 import sys
 from itertools import permutations, product
 from logging.handlers import RotatingFileHandler
-from typing import List, Set
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 
 class Config:
@@ -76,7 +75,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def generate_combinations(password: str) -> List[str]:
+def generate_combinations(password: str) -> list[str]:
     """Generate all combinations of upper and lower case for the letters.
 
     Args:
@@ -91,7 +90,7 @@ def generate_combinations(password: str) -> List[str]:
     return ["".join(combination) for combination in product(*chars)]
 
 
-def generate_permutations(combinations: List[str]) -> Set[str]:
+def generate_permutations(combinations: list[str]) -> set[str]:
     """Generate all permutations of each combination.
 
     Args:
@@ -100,7 +99,7 @@ def generate_permutations(combinations: List[str]) -> Set[str]:
     Returns:
         Set of unique permuted passwords.
     """
-    permuted_passwords: Set[str] = set()
+    permuted_passwords: set[str] = set()
     for combination in combinations:
         perms = permutations(combination)
         for perm in perms:
@@ -108,7 +107,7 @@ def generate_permutations(combinations: List[str]) -> Set[str]:
     return permuted_passwords
 
 
-def save_passwords(passwords: Set[str], output_file: str) -> None:
+def save_passwords(passwords: set[str], output_file: str) -> None:
     """Save generated passwords to the output file.
 
     Args:
@@ -128,7 +127,7 @@ def save_passwords(passwords: Set[str], output_file: str) -> None:
     except PermissionError as e:
         logging.error("Cannot write to output file %s: %s", output_file, e)
         raise
-    except IOError as e:
+    except OSError as e:
         logging.error("Error writing to output file %s: %s", output_file, e)
         raise
 
