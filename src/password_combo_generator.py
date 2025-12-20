@@ -9,10 +9,45 @@ Author: Kris Armstrong
 import argparse
 import logging
 import sys
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
 from itertools import permutations, product
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
-__version__ = "1.0.2"
+
+def _find_pyproject(start: Path) -> Path | None:
+    for parent in (start, *start.parents):
+        candidate = parent / "pyproject.toml"
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def _read_pyproject_version() -> str:
+    try:
+        import tomllib  # Python 3.11+
+    except ModuleNotFoundError:
+        return "0.0.0"
+
+    pyproject = _find_pyproject(Path(__file__).resolve())
+    if not pyproject:
+        return "0.0.0"
+    try:
+        data = tomllib.loads(pyproject.read_text())
+    except Exception:
+        return "0.0.0"
+    return data.get("project", {}).get("version", "0.0.0")
+
+
+_pyproject_version = _read_pyproject_version()
+if _pyproject_version != "0.0.0":
+    __version__ = _pyproject_version
+else:
+    try:
+        __version__ = _pkg_version("password-combo-generator")
+    except PackageNotFoundError:
+        __version__ = "0.0.0"
 
 
 class Config:
@@ -65,13 +100,9 @@ def parse_args() -> argparse.Namespace:
         default="passwords.txt",
         help="Output file for generated passwords",
     )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Enable verbose logging"
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging")
     parser.add_argument("--logfile", default=Config.LOG_FILE, help="Log file path")
-    parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {__version__}"
-    )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     return parser.parse_args()
 
 
@@ -84,9 +115,7 @@ def generate_combinations(password: str) -> list[str]:
     Returns:
         List of all case combinations.
     """
-    chars = [
-        (char.lower(), char.upper()) if char.isalpha() else (char,) for char in password
-    ]
+    chars = [(char.lower(), char.upper()) if char.isalpha() else (char,) for char in password]
     return ["".join(combination) for combination in product(*chars)]
 
 
@@ -153,9 +182,7 @@ def main() -> int:
         permutations_set = generate_permutations(combinations)
         logging.debug("Generated %d unique permutations", len(permutations_set))
         save_passwords(permutations_set, args.output_file)
-        print(
-            f"Generated {len(permutations_set)} passwords, saved to {args.output_file}"
-        )
+        print(f"Generated {len(permutations_set)} passwords, saved to {args.output_file}")
         return 0
     except KeyboardInterrupt:
         logging.info("Cancelled by user")
