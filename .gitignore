@@ -1,46 +1,78 @@
-# Python
-*.pyc
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║ Password Combo Generator - .gitignore                                     ║
+# ╠═══════════════════════════════════════════════════════════════════════════╣
+# ║ Generate password combinations for security testing                       ║
+# ║ Stack: Python 3.x, combinatorial generation                               ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+# ─── Python Core ─────────────────────────────────────────────────────────────
 __pycache__/
+*.py[cod]
+*$py.class
+*.pyc
 *.pyo
 *.pyd
-.Python
-env/
-venv/
+
+# ─── Virtual Environments ────────────────────────────────────────────────────
 .venv/
+venv/
+env/
 ENV/
-*.egg-info/
-dist/
+env.bak/
+venv.bak/
+.Python
+
+# ─── Distribution & Packaging ────────────────────────────────────────────────
 build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+MANIFEST
 *.whl
-.env
 
-# IDE
-.idea/
-.vscode/
-*.sublime-project
-*.sublime-workspace
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Tests/Output
+# ─── Testing & Coverage ──────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
 tests/output/
+
+# ─── Type Checking & Linting ─────────────────────────────────────────────────
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# ─── Environment & Secrets ───────────────────────────────────────────────────
+.env
+.env.*
+.env.local
+
+# ─── Generated Password Lists ────────────────────────────────────────────────
+# Generated password combinations (potentially sensitive)
+passwords.txt
+combos.txt
+wordlist*.txt
+generated_*.txt
+output/*.txt
+
+# Archives of generated passwords
+*.zip
+*.tar.gz
+*.7z
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
 *.log
 *.log.*
 
-# Archive
-*.zip
-*.tar.gz
-
-# Tooling defaults
-.env.*
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
-.coverage
-coverage.xml
-.eggs/
-.tox/
-.nox/
-*.log
+# ─── Temporary Files ─────────────────────────────────────────────────────────
+*.tmp
+*.temp
+*~
+.tmp_*
