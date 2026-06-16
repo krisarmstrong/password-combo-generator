@@ -6,6 +6,7 @@ Generates all case combinations and permutations of a password, saving results t
 
 Author: Kris Armstrong
 """
+
 import argparse
 import logging
 import sys
